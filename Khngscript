@@ -1,8 +1,5 @@
-loadstring(game:HttpGet("https://pastefy.app/QTSoCAmv/raw"))()
 
-task.delay(2, function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Khangdz28/CanhBao/refs/heads/main/Khngscript"))()
-end)
 
 task.delay(15, function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Khangdz28/Mainnn/refs/heads/main/Khngscriptt"))()
