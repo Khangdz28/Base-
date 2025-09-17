@@ -1,6 +1,6 @@
 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Khangdz28/CanhBao/refs/heads/main/Khngscript"))()
 
-task.delay(15, function()
+task.delay(3, function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Khangdz28/Mainnn/refs/heads/main/Khngscriptt"))()
 end)
