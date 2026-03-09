@@ -1,0 +1,465 @@
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+
+if CoreGui:FindFirstChild("KeySystem") then
+    CoreGui:FindFirstChild("KeySystem"):Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "KeySystem"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.DisplayOrder = 2147483647
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = CoreGui
+
+local Blocker = Instance.new("Frame")
+Blocker.Size = UDim2.new(1, 0, 1, 0)
+Blocker.BackgroundTransparency = 1
+Blocker.BorderSizePixel = 0
+Blocker.ZIndex = 100
+Blocker.Parent = ScreenGui
+
+local BG = Instance.new("Frame")
+BG.Size = UDim2.new(1, 0, 1, 0)
+BG.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+BG.BackgroundTransparency = 0.4
+BG.BorderSizePixel = 0
+BG.ZIndex = 1
+BG.Parent = ScreenGui
+
+-- Main Frame
+local Main = Instance.new("Frame")
+Main.Size = UDim2.new(0, 300, 0, 350)
+Main.AnchorPoint = Vector2.new(0.5, 0.5)
+Main.Position = UDim2.new(0.5, 0, 0.5, 0)
+Main.BackgroundColor3 = Color3.fromRGB(8, 12, 22)
+Main.BorderSizePixel = 0
+Main.ZIndex = 2
+Main.Parent = ScreenGui
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 14)
+
+local MainStroke = Instance.new("UIStroke", Main)
+MainStroke.Color = Color3.fromRGB(0, 200, 255)
+MainStroke.Thickness = 1.5
+MainStroke.Transparency = 0.3
+
+local Glow = Instance.new("ImageLabel")
+Glow.Size = UDim2.new(1, 60, 1, 60)
+Glow.Position = UDim2.new(0, -30, 0, -30)
+Glow.BackgroundTransparency = 1
+Glow.Image = "rbxassetid://5028857472"
+Glow.ImageColor3 = Color3.fromRGB(0, 150, 255)
+Glow.ImageTransparency = 0.85
+Glow.ZIndex = 1
+Glow.Parent = Main
+
+-- Header
+local Header = Instance.new("Frame")
+Header.Size = UDim2.new(1, 0, 0, 58)
+Header.BackgroundColor3 = Color3.fromRGB(0, 140, 220)
+Header.BorderSizePixel = 0
+Header.ZIndex = 3
+Header.Parent = Main
+Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 14)
+
+local HeaderFix = Instance.new("Frame")
+HeaderFix.Size = UDim2.new(1, 0, 0.5, 0)
+HeaderFix.Position = UDim2.new(0, 0, 0.5, 0)
+HeaderFix.BackgroundColor3 = Color3.fromRGB(0, 140, 220)
+HeaderFix.BorderSizePixel = 0
+HeaderFix.ZIndex = 3
+HeaderFix.Parent = Header
+
+local HeaderGradient = Instance.new("UIGradient")
+HeaderGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 100, 220)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255)),
+})
+HeaderGradient.Rotation = 90
+HeaderGradient.Parent = Header
+
+local LockIcon = Instance.new("TextLabel")
+LockIcon.Size = UDim2.new(0, 34, 0, 34)
+LockIcon.Position = UDim2.new(0, 12, 0.5, -17)
+LockIcon.BackgroundTransparency = 1
+LockIcon.Text = "🔐"
+LockIcon.TextScaled = true
+LockIcon.Font = Enum.Font.GothamBold
+LockIcon.ZIndex = 4
+LockIcon.Parent = Header
+
+local HeaderTitle = Instance.new("TextLabel")
+HeaderTitle.Size = UDim2.new(1, -58, 0, 24)
+HeaderTitle.Position = UDim2.new(0, 52, 0, 7)
+HeaderTitle.BackgroundTransparency = 1
+HeaderTitle.Text = "KEY SYSTEM"
+HeaderTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+HeaderTitle.TextScaled = true
+HeaderTitle.Font = Enum.Font.GothamBold
+HeaderTitle.TextXAlignment = Enum.TextXAlignment.Left
+HeaderTitle.ZIndex = 4
+HeaderTitle.Parent = Header
+
+local HeaderSub = Instance.new("TextLabel")
+HeaderSub.Size = UDim2.new(1, -58, 0, 16)
+HeaderSub.Position = UDim2.new(0, 52, 0, 34)
+HeaderSub.BackgroundTransparency = 1
+HeaderSub.Text = "Enter key to continue"
+HeaderSub.TextColor3 = Color3.fromRGB(200, 235, 255)
+HeaderSub.TextScaled = true
+HeaderSub.Font = Enum.Font.Code
+HeaderSub.TextXAlignment = Enum.TextXAlignment.Left
+HeaderSub.ZIndex = 4
+HeaderSub.Parent = Header
+
+-- Guide
+local GuideLabel = Instance.new("TextLabel")
+GuideLabel.Size = UDim2.new(1, -30, 0, 30)
+GuideLabel.Position = UDim2.new(0, 15, 0, 68)
+GuideLabel.BackgroundTransparency = 1
+GuideLabel.Text = "Bấm GET KEY → truy cập link → copy key → dán vào ô dưới."
+GuideLabel.TextColor3 = Color3.fromRGB(140, 185, 210)
+GuideLabel.TextScaled = true
+GuideLabel.Font = Enum.Font.Code
+GuideLabel.TextWrapped = true
+GuideLabel.ZIndex = 3
+GuideLabel.Parent = Main
+
+-- Input
+local InputBG = Instance.new("Frame")
+InputBG.Size = UDim2.new(1, -30, 0, 40)
+InputBG.Position = UDim2.new(0, 15, 0, 106)
+InputBG.BackgroundColor3 = Color3.fromRGB(14, 22, 38)
+InputBG.BorderSizePixel = 0
+InputBG.ZIndex = 3
+InputBG.Parent = Main
+Instance.new("UICorner", InputBG).CornerRadius = UDim.new(0, 8)
+local InputStroke = Instance.new("UIStroke", InputBG)
+InputStroke.Color = Color3.fromRGB(0, 160, 220)
+InputStroke.Thickness = 1
+InputStroke.Transparency = 0.5
+
+local KeyIcon = Instance.new("TextLabel")
+KeyIcon.Size = UDim2.new(0, 32, 1, 0)
+KeyIcon.BackgroundTransparency = 1
+KeyIcon.Text = "🔑"
+KeyIcon.TextScaled = true
+KeyIcon.ZIndex = 4
+KeyIcon.Parent = InputBG
+
+local KeyInput = Instance.new("TextBox")
+KeyInput.Size = UDim2.new(1, -38, 1, 0)
+KeyInput.Position = UDim2.new(0, 34, 0, 0)
+KeyInput.BackgroundTransparency = 1
+KeyInput.PlaceholderText = "Nhập key tại đây..."
+KeyInput.PlaceholderColor3 = Color3.fromRGB(80, 120, 150)
+KeyInput.Text = ""
+KeyInput.TextColor3 = Color3.fromRGB(0, 220, 255)
+KeyInput.TextScaled = true
+KeyInput.Font = Enum.Font.Code
+KeyInput.ClearTextOnFocus = false
+KeyInput.ZIndex = 4
+KeyInput.Parent = InputBG
+
+-- Status
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Size = UDim2.new(1, -30, 0, 22)
+StatusLabel.Position = UDim2.new(0, 15, 0, 152)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = ""
+StatusLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
+StatusLabel.TextScaled = true
+StatusLabel.Font = Enum.Font.GothamBold
+StatusLabel.ZIndex = 3
+StatusLabel.Parent = Main
+
+-- Link Box
+local LinkBG = Instance.new("Frame")
+LinkBG.Size = UDim2.new(1, -30, 0, 40)
+LinkBG.Position = UDim2.new(0, 15, 0, 180)
+LinkBG.BackgroundColor3 = Color3.fromRGB(10, 30, 20)
+LinkBG.BorderSizePixel = 0
+LinkBG.Visible = false
+LinkBG.ZIndex = 3
+LinkBG.Parent = Main
+Instance.new("UICorner", LinkBG).CornerRadius = UDim.new(0, 8)
+local LinkStroke = Instance.new("UIStroke", LinkBG)
+LinkStroke.Color = Color3.fromRGB(0, 255, 150)
+LinkStroke.Thickness = 1
+
+local LinkText = Instance.new("TextLabel")
+LinkText.Size = UDim2.new(0.76, 0, 1, 0)
+LinkText.Position = UDim2.new(0, 8, 0, 0)
+LinkText.BackgroundTransparency = 1
+LinkText.Text = "linkngon.io/ooBfYecohnJ"
+LinkText.TextColor3 = Color3.fromRGB(0, 255, 180)
+LinkText.TextScaled = true
+LinkText.Font = Enum.Font.Code
+LinkText.TextXAlignment = Enum.TextXAlignment.Left
+LinkText.TextTruncate = Enum.TextTruncate.AtEnd
+LinkText.ZIndex = 4
+LinkText.Parent = LinkBG
+
+local CopyBtn = Instance.new("TextButton")
+CopyBtn.Size = UDim2.new(0.22, -4, 0.65, 0)
+CopyBtn.Position = UDim2.new(0.78, 0, 0.175, 0)
+CopyBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 120)
+CopyBtn.BorderSizePixel = 0
+CopyBtn.Text = "📋 Copy"
+CopyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CopyBtn.TextScaled = true
+CopyBtn.Font = Enum.Font.GothamBold
+CopyBtn.ZIndex = 4
+CopyBtn.Parent = LinkBG
+Instance.new("UICorner", CopyBtn).CornerRadius = UDim.new(0, 6)
+
+-- GET KEY
+local GetKeyBtn = Instance.new("TextButton")
+GetKeyBtn.Size = UDim2.new(1, -30, 0, 40)
+GetKeyBtn.Position = UDim2.new(0, 15, 0, 232)
+GetKeyBtn.BackgroundColor3 = Color3.fromRGB(0, 160, 255)
+GetKeyBtn.BorderSizePixel = 0
+GetKeyBtn.Text = "🔗  GET KEY"
+GetKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+GetKeyBtn.TextScaled = true
+GetKeyBtn.Font = Enum.Font.GothamBold
+GetKeyBtn.ZIndex = 3
+GetKeyBtn.Parent = Main
+Instance.new("UICorner", GetKeyBtn).CornerRadius = UDim.new(0, 10)
+
+local GetGrad = Instance.new("UIGradient", GetKeyBtn)
+GetGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 120, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255)),
+})
+GetGrad.Rotation = 90
+
+-- CHECK KEY
+local CheckBtn = Instance.new("TextButton")
+CheckBtn.Size = UDim2.new(1, -30, 0, 40)
+CheckBtn.Position = UDim2.new(0, 15, 0, 280)
+CheckBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 100)
+CheckBtn.BorderSizePixel = 0
+CheckBtn.Text = "✅  CHECK KEY"
+CheckBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CheckBtn.TextScaled = true
+CheckBtn.Font = Enum.Font.GothamBold
+CheckBtn.ZIndex = 3
+CheckBtn.Parent = Main
+Instance.new("UICorner", CheckBtn).CornerRadius = UDim.new(0, 10)
+
+local CheckGrad = Instance.new("UIGradient", CheckBtn)
+CheckGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 80)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 220, 130)),
+})
+CheckGrad.Rotation = 90
+
+-- Footer
+local Footer = Instance.new("TextLabel")
+Footer.Size = UDim2.new(1, 0, 0, 20)
+Footer.Position = UDim2.new(0, 0, 1, -22)
+Footer.BackgroundTransparency = 1
+Footer.Text = "Powered by Freeze Trade Script"
+Footer.TextColor3 = Color3.fromRGB(60, 100, 130)
+Footer.TextScaled = true
+Footer.Font = Enum.Font.Code
+Footer.ZIndex = 3
+Footer.Parent = Main
+
+-- ═══════════════════════════════════
+-- LOGIC
+-- ═══════════════════════════════════
+Main.Position = UDim2.new(0.5, 0, 0.5, 60)
+Main.BackgroundTransparency = 1
+TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+    Position = UDim2.new(0.5, 0, 0.5, 0),
+    BackgroundTransparency = 0,
+}):Play()
+
+KeyInput.Focused:Connect(function()
+    TweenService:Create(InputStroke, TweenInfo.new(0.2), {Transparency = 0}):Play()
+    TweenService:Create(InputStroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(0, 220, 255)}):Play()
+end)
+KeyInput.FocusLost:Connect(function()
+    TweenService:Create(InputStroke, TweenInfo.new(0.2), {Transparency = 0.5}):Play()
+end)
+
+GetKeyBtn.MouseButton1Click:Connect(function()
+    TweenService:Create(GetKeyBtn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 100, 200)}):Play()
+    task.wait(0.1)
+    TweenService:Create(GetKeyBtn, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(0, 160, 255)}):Play()
+
+    LinkBG.Visible = true
+    LinkBG.BackgroundTransparency = 1
+    TweenService:Create(LinkBG, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {
+        BackgroundTransparency = 0
+    }):Play()
+
+    StatusLabel.Text = "🔗 Truy cập link và copy key!"
+    StatusLabel.TextColor3 = Color3.fromRGB(0, 220, 160)
+end)
+
+CopyBtn.MouseButton1Click:Connect(function()
+    setclipboard("https://linkngon.io/ooBfYecohnJ")
+    CopyBtn.Text = "✔ Copied!"
+    CopyBtn.BackgroundColor3 = Color3.fromRGB(0, 220, 130)
+    task.wait(1.5)
+    CopyBtn.Text = "📋 Copy"
+    CopyBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 120)
+end)
+
+CheckBtn.MouseButton1Click:Connect(function()
+    if KeyInput.Text == "" then
+        StatusLabel.Text = "⚠ Vui lòng nhập key trước!"
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 200, 0)
+        return
+    end
+
+    CheckBtn.Text = "⏳ Đang kiểm tra..."
+    CheckBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    StatusLabel.Text = ""
+    task.wait(1.5)
+
+    for _ = 1, 4 do
+        TweenService:Create(Main, TweenInfo.new(0.05), {Position = UDim2.new(0.5, 8, 0.5, 0)}):Play()
+        task.wait(0.05)
+        TweenService:Create(Main, TweenInfo.new(0.05), {Position = UDim2.new(0.5, -8, 0.5, 0)}):Play()
+        task.wait(0.05)
+    end
+    TweenService:Create(Main, TweenInfo.new(0.1), {Position = UDim2.new(0.5, 0, 0.5, 0)}):Play()
+
+    TweenService:Create(InputStroke, TweenInfo.new(0.1), {
+        Color = Color3.fromRGB(255, 50, 50),
+        Transparency = 0,
+    }):Play()
+    task.wait(1.2)
+    TweenService:Create(InputStroke, TweenInfo.new(0.3), {
+        Color = Color3.fromRGB(0, 160, 220),
+        Transparency = 0.5,
+    }):Play()
+
+    StatusLabel.Text = "❌ Key không hợp lệ!  |  Key Invalid!"
+    StatusLabel.TextColor3 = Color3.fromRGB(255, 60, 60)
+    CheckBtn.Text = "✅  CHECK KEY"
+    CheckBtn.BackgroundColor3 = Color3.fromRGB(0, 180, 100)
+end)local function scanPets()
+    local results = {}
+    local seen = {}
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("SurfaceGui") and obj.Name == "AnimalOverhead" then
+            local displayName = obj:FindFirstChild("DisplayName")
+            local generation  = obj:FindFirstChild("Generation")
+            local rarity      = obj:FindFirstChild("Rarity")
+            local mutation    = obj:FindFirstChild("Mutation")
+            local price       = obj:FindFirstChild("Price")
+            local stolen      = obj:FindFirstChild("Stolen")
+
+            if displayName and generation then
+                local key = displayName.Text .. generation.Text
+                if not seen[key] then
+                    seen[key] = true
+                    table.insert(results, {
+                        name     = displayName.Text,
+                        gen      = generation.Text,
+                        rarity   = rarity and rarity.Text or "?",
+                        mutation = mutation and mutation.Text or "",
+                        price    = price and price.Text or "?",
+                        stolen   = stolen and stolen.Text == "STOLEN" or false,
+                    })
+                end
+            end
+        end
+    end
+
+    -- Sắp xếp theo gen cao nhất
+    table.sort(results, function(a, b)
+        local function parseNum(str)
+            local num, suffix = str:match("%$([%d%.]+)([KMBTkmbt]?)")
+            num = tonumber(num) or 0
+            local mult = {K=1e3,M=1e6,B=1e9,T=1e12,k=1e3,m=1e6,b=1e9,t=1e12}
+            return num * (mult[suffix] or 1)
+        end
+        return parseNum(a.gen) > parseNum(b.gen)
+    end)
+
+    return results
+end
+
+-- ═══════════════════════════════════
+-- TỰ ĐỘNG QUÉT MỖI 3 GIÂY
+-- ═══════════════════════════════════
+local SCAN_INTERVAL = 3 -- đổi số này để thay đổi tốc độ quét
+local lastResults = {}
+
+local function resultsChanged(new)
+    if #new ~= #lastResults then return true end
+    for i, pet in ipairs(new) do
+        if not lastResults[i] then return true end
+        if pet.name ~= lastResults[i].name
+        or pet.gen  ~= lastResults[i].gen then
+            return true
+        end
+    end
+    return false
+end
+
+task.spawn(function()
+    while true do
+        local results = scanPets()
+
+        -- Chỉ print khi có thay đổi
+        if resultsChanged(results) then
+            lastResults = results
+
+            print("═══════════════════════════════════")
+            print("🐾 PET SCANNER — " .. #results .. " pets found")
+            print("═══════════════════════════════════")
+
+            if #results == 0 then
+                print("  Không tìm thấy pet nào trong tầm!")
+            else
+                for i, pet in ipairs(results) do
+                    local line = string.format(
+                        "[%d] %-25s | Gen: %-10s | Rarity: %-10s | Giá: %-8s%s%s",
+                        i,
+                        pet.name,
+                        pet.gen,
+                        pet.rarity,
+                        pet.price,
+                        pet.mutation ~= "" and " | ✦ " .. pet.mutation or "",
+                        pet.stolen and " | 🔴 STOLEN" or ""
+                    )
+                    print(line)
+                end
+
+                -- Tính tổng gen
+                local totalGen = 0
+                for _, p in ipairs(results) do
+                    local num, suffix = p.gen:match("%$([%d%.]+)([KMBTkmbt]?)")
+                    num = tonumber(num) or 0
+                    local mult = {K=1e3,M=1e6,B=1e9,T=1e12,k=1e3,m=1e6,b=1e9,t=1e12}
+                    totalGen = totalGen + num * (mult[suffix] or 1)
+                end
+
+                local function fmtNum(n)
+                    if n >= 1e12 then return string.format("$%.2fT/s", n/1e12)
+                    elseif n >= 1e9  then return string.format("$%.2fB/s", n/1e9)
+                    elseif n >= 1e6  then return string.format("$%.2fM/s", n/1e6)
+                    elseif n >= 1e3  then return string.format("$%.2fK/s", n/1e3)
+                    else return string.format("$%.0f/s", n) end
+                end
+
+                print("───────────────────────────────────")
+                print("💰 Tổng Gen/s: " .. fmtNum(totalGen))
+                print("═══════════════════════════════════")
+            end
+        end
+
+        task.wait(SCAN_INTERVAL)
+    end
+end)
+
+print("✅ Auto Pet Scanner đang chạy — quét mỗi " .. SCAN_INTERVAL .. "s")
