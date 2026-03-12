@@ -1,3 +1,69 @@
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "Loading.",
+    Duration = 5,
+})
+task.wait(3)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "Loading..",
+    Duration = 5,
+task.wait(3)
+})
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "Loading...",
+    Duration = 5,
+task.wait(3)
+})
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "Loading..",
+    Duration = 5,
+})
+task.wait(3)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "ERROR CONNECTING INTERNET",
+    Duration = 5,
+})
+task.wait(3)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "Auto Reconnect|1/3",
+    Duration = 5,
+})
+task.wait(1)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "Auto Reconnect|2/3",
+    Duration = 5,
+})
+task.wait(4)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "Auto Reconnect|3/3",
+    Duration = 5,
+})
+task.wait(3)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "Reconnect Success",
+    Duration = 5,
+})
+task.wait(1)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "Loading again",
+    Duration = 5,
+})
+task.wait(3)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "Freeze Trade Loading",
+    Text = "Done! if it not working retry other times",
+    Duration = 5,
+})
+task.wait(3)
 local function fakeLag(seconds)
     local start = tick()
     while tick() - start < seconds do end
