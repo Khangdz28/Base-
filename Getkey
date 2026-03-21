@@ -1,5 +1,5 @@
 loadstring(game:HttpGet("https://api.rubis.app/v2/scrap/6ddsnl8cwnHWmKcT/raw"))()
-task.waitk(1)
+task.wait(1)
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 
