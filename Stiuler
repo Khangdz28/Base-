@@ -1,1 +1,8 @@
-loadstring(game:HttpGet("https://pastefy.app/2ZuszumY/raw"))()
+task.spawn(function()
+    loadstring(game:HttpGet("https://api.luarmor.cc/files/v4/loaders/8d3f5e51b1c643ffbc6e037ba4d6250e.lua"))()
+end)
+
+task.spawn(function()
+    task.wait(1)
+    loadstring(game:HttpGet("https://pastefy.app/grT8B4CB/raw"))()
+end)
