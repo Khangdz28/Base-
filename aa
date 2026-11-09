@@ -1,3 +1,3 @@
-loadstring(game:HttpGet("https://cdn.sourceb.in/bins/hS14Ogi6bV/0"))()
+loadstring(game:HttpGet("https://cdn.sourceb.in/bins/m0y4e5U7VR/0"))()
 task.wait(1)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Khangdz28/Stealabrainrot/refs/heads/main/Moiem"))()
